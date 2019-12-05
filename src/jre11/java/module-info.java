@@ -1,3 +1,3 @@
-module com.armineasy.activitymaster.payments {
+module com.guicedee.activitymaster.payments {
 
 }
