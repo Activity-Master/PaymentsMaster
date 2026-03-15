@@ -12,6 +12,10 @@
     <artifactId>payment-master</artifactId>
     <packaging>jar</packaging>
     <name>Payment Master</name>
+
+    <properties>
+        <project.scm.nameUrl>/Activity-Master/PaymentsMaster</project.scm.nameUrl>
+    </properties>
 	
     <dependencies>
      
