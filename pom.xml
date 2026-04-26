@@ -4,7 +4,7 @@
 
 
     <parent>
-        <groupId>com.guicedee.activitymaster</groupId>
+        <groupId>com.activity-master</groupId>
         <artifactId>activitymaster-group</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
