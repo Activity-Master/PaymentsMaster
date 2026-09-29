@@ -39,7 +39,7 @@ existing FSDM value index; settlement lookup uses the existing parent Event inde
 With 9,000 synthetic history rows, the prior filter index plus sort took about
 1.03 ms for the first 50 entries. An index on `(arrangement_id, unit,
 warehousecreatedtimestamp DESC, entry_id)` took about 0.025 ms in the same
-test. The index is now declared in the managed core `transactions.sql` migration.
+test. The index is now declared in the managed core `16.transactions.sql` migration.
 These timings are a reproducible local baseline, not a production SLO or proof
 that every possible branch and tenant size has been load tested. Re-run plans
 against representative tenant volumes before further index or query changes.
