@@ -63,7 +63,7 @@ final class PaymentStore {
         return locked.chain(() -> session.createNativeQuery("""
             select e.eventid from event.event e join dbo.activeflag f on f.activeflagid=e.activeflagid
             where e.eventid=:id and e.enterpriseid=:enterprise and e.systemid=:system and f.allowaccess=1
-            and e.effectivefromdate<=statement_timestamp() and e.effectivetodate>statement_timestamp() for share of e,f
+            and e.effectivefromdate<=statement_timestamp() and e.effectivetodate>statement_timestamp()
             """,UUID.class).setParameter("id",id).setParameter("enterprise",system.getEnterprise().getId()).setParameter("system",system.getId()).getResultList())
             .chain(rows -> PaymentRows.require(rows.size()==1))
             .chain(() -> links(session,system,id,"eventxeventtype","eventtypeid","EventXEventType"))
@@ -106,7 +106,7 @@ final class PaymentStore {
             join classification.classificationdataconcept d on d.classificationdataconceptid=c.classificationdataconceptid
             join dbo.systems s on s.systemid=x.systemid
             where c.classificationname='PaymentReferenceKey' and d.classificationdataconceptname='EventXClassification'
-            and s.systemname=:system and x.value=:key for share of x
+            and s.systemname=:system and x.value=:key
             """,UUID.class).setParameter("system",PaymentSystem.NAME).setParameter("key",key.toString()).getResultList())
             .invoke(ids -> { if(ids.stream().anyMatch(id -> !id.equals(attempt.id()))) throw new IllegalStateException("Provider payment already claimed"); })
             .chain(() -> attempt.reference()!=null ? Uni.createFrom().voidItem() : classify(session,system,identity,attempt.id(),"PaymentReferenceKey",key.toString())
@@ -141,7 +141,7 @@ final class PaymentStore {
         return session.createNativeQuery("""
             select p.involvedpartyid from party.involvedparty p join dbo.activeflag f on f.activeflagid=p.activeflagid
             where p.involvedpartyid=:id and p.enterpriseid=:enterprise and f.allowaccess=1
-            and p.effectivefromdate<=statement_timestamp() and p.effectivetodate>statement_timestamp() for share of p,f
+            and p.effectivefromdate<=statement_timestamp() and p.effectivetodate>statement_timestamp()
             """,UUID.class).setParameter("id",party).setParameter("enterprise",identity.enterpriseId()).getResultList()
             .chain(rows -> PaymentRows.require(rows.size()==1))
             .chain(() -> new InvolvedParty().setId(party).canRead(session,system,identity.tokens())).chain(PaymentRows::require)
@@ -169,7 +169,7 @@ final class PaymentStore {
             +"join dbo.activeflag cf on cf.activeflagid=c.activeflagid "
             +"where x."+eventColumn(table)+"=:event and x.enterpriseid=:enterprise and x.systemid=:system "
             +"and c.enterpriseid=:enterprise and c.systemid=:system and d.classificationdataconceptname=:concept "
-            +"for share of x,c,f,cf",Object[].class)
+            +"",Object[].class)
             .setParameter("event",event).setParameter("enterprise",system.getEnterprise().getId()).setParameter("system",system.getId())
             .setParameter("concept",concept).getResultList().invoke(rows -> {
                 // Never reinterpret a disabled reference/settlement as a new, unbound payment.

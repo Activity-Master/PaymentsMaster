@@ -31,7 +31,7 @@ final class PaymentAccess {
                 .chain(() -> session.createNativeQuery("""
                     select 1 from party.involvedparty p join dbo.activeflag f on f.activeflagid=p.activeflagid
                     where p.involvedpartyid=:actor and p.enterpriseid=:enterprise and f.allowaccess=1
-                    and p.effectivefromdate<=statement_timestamp() and p.effectivetodate>statement_timestamp() for share of p,f
+                    and p.effectivefromdate<=statement_timestamp() and p.effectivetodate>statement_timestamp() 
                     """, Integer.class).setParameter("actor", identity.partyId()).setParameter("enterprise", identity.enterpriseId())
                     .getResultList().chain(rows -> rows.isEmpty() ? denied() : Uni.createFrom().voidItem()))
                 .chain(() -> new InvolvedParty().setId(identity.partyId()).canRead(session, system, identity.tokens()))

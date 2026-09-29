@@ -39,7 +39,7 @@ final class PaymentRows {
             join dbo.activeflag f on f.activeflagid=c.activeflagid
             where c.classificationname=:name and d.classificationdataconceptname=:concept
             and c.enterpriseid=:enterprise and c.systemid=:system and f.allowaccess=1
-            and c.effectivefromdate<=statement_timestamp() and c.effectivetodate>statement_timestamp() for share of c,d,f
+            and c.effectivefromdate<=statement_timestamp() and c.effectivetodate>statement_timestamp()
             """, UUID.class).setParameter("name", name).setParameter("concept", concept)
             .setParameter("enterprise", system.getEnterprise().getId()).setParameter("system", system.getId()).getResultList()
             .chain(rows -> rows.size()==1 ? Uni.createFrom().item(new Classification().setId(rows.getFirst())) :
