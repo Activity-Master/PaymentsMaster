@@ -16,8 +16,12 @@ public final class PaymentSystemInstall implements ISystemUpdate {
         IClassificationDataConceptService<?> concepts=IGuiceContext.get(IClassificationDataConceptService.class);
         IEventService<?> events=IGuiceContext.get(IEventService.class);
         IClassificationService<?> classifications=IGuiceContext.get(IClassificationService.class);
+        ISystemsService<?> systems=IGuiceContext.get(ISystemsService.class);
         var master = IGuiceContext.get(PaymentSystem.class);
-        return master.getSystem(session, enterprise).chain(system -> master.getSystemToken(session, enterprise).chain(token ->
+        return systems.getActivityMaster(session, enterprise)
+            .chain(core -> systems.getSecurityIdentityToken(session, core).chain(token ->
+            IGuiceContext.get(com.guicedee.activitymaster.fsdm.plugins.PluginService.class)
+            .registerBuiltIn(session, core, token, master).chain(() -> master.getSystem(session, enterprise)).chain(system ->
             concepts.createDataConcept(session,
                 EnterpriseClassificationDataConcepts.EventXEvent, "Event relationships", system, token)
             .chain(() -> FsdmBehaviorTaxonomy.ensure(session, system, token))
@@ -31,7 +35,7 @@ public final class PaymentSystemInstall implements ISystemUpdate {
                     }
                 }
                 return chain;
-            })))
+            }))))
             .invoke(() -> logProgress(PaymentSystem.NAME, "Registered payment capability", 1)).replaceWith(Boolean.TRUE);
     }
 }

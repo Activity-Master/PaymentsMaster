@@ -5,6 +5,16 @@ register the binder, scanner, Payment Master system and enterprise update. Walle
 Master is a transitive dependency. No host authentication or concrete provider SDK
 belongs in this reusable module.
 
+Payment Master and Wallet Master are built-in Plugins. Their forward conversion
+runs at enterprise update 1020 and preserves their registration IDs and records.
+Install both catalogue registrations on the authorized party with `PluginService`.
+Obtain the user's consent to Payment's Activity Master System and Wallet Master
+dependencies, and Wallet's Activity Master System dependency. These checks apply
+to reads, creation, retries and settlement alongside existing provider behavior
+grants. Administrator denial of Payment's Wallet dependency blocks payments.
+Callbacks use the initiating user's current verified credential and installation
+party; a gateway or plugin credential cannot authorize settlement.
+
 ## Bindings
 
 - `WalletIdentityProvider`: fresh verified actor, authorized enterprise/context,

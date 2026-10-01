@@ -1,14 +1,18 @@
 package com.guicedee.activitymaster.payments;
 
-import com.guicedee.activitymaster.fsdm.client.services.administration.MasterDefaultSystem;
+import com.guicedee.activitymaster.fsdm.client.services.administration.MasterDefaultPlugin;
 import com.guicedee.activitymaster.fsdm.client.services.builders.warehouse.enterprise.IEnterprise;
 import com.guicedee.activitymaster.fsdm.client.services.builders.warehouse.systems.ISystems;
 import com.guicedee.activitymaster.fsdm.db.entities.systems.Systems;
 import io.smallrye.mutiny.Uni;
 import org.hibernate.reactive.mutiny.Mutiny;
 
-public final class PaymentSystem extends MasterDefaultSystem<PaymentSystem> {
+public final class PaymentSystem extends MasterDefaultPlugin<PaymentSystem> {
     public static final String NAME = "Payment Master";
+    @Override public java.util.Set<String> getPluginDependencies() {
+        return java.util.Set.of(com.guicedee.activitymaster.fsdm.client.services.ISystemsService.ActivityMasterSystemName,
+                com.guicedee.activitymaster.wallet.WalletSystem.NAME);
+    }
     @Override public String getSystemName() { return NAME; }
     @Override public String getSystemDescription() { return "Provider payment orchestration backed by Wallet Master"; }
     @Override public int totalTasks() { return 0; }

@@ -26,8 +26,11 @@ final class PaymentAccess {
             .chain(() -> plugin(session, system, identity, identity.providerId(), "wallet.deposit"));
     }
     private Uni<Void> plugin(Mutiny.StatelessSession session, ISystems<?, ?> system, WalletIdentity identity, String provider, String action) {
-        return behaviors.check(session, system.getId(), identity.enterpriseId(), identity.actor(),
-                    identity.context(), identity.identityToken(), provider, action)
+        return com.guicedee.client.IGuiceContext.get(com.guicedee.activitymaster.fsdm.plugins.PluginService.class)
+                .checkBuiltIn(session, system, new com.guicedee.activitymaster.fsdm.plugins.PluginModels.Identity(
+                        identity.partyId(), identity.enterpriseId(), identity.identityToken()), identity.installationPartyId())
+                .chain(() -> behaviors.check(session, system.getId(), identity.enterpriseId(), identity.actor(),
+                    identity.context(), identity.identityToken(), provider, action))
                 .chain(() -> session.createNativeQuery("""
                     select 1 from party.involvedparty p join dbo.activeflag f on f.activeflagid=p.activeflagid
                     where p.involvedpartyid=:actor and p.enterpriseid=:enterprise and f.allowaccess=1
